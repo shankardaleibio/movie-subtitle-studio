@@ -1,0 +1,646 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17191d">
+<title>Shankar Subtitle Studio</title>
+
+<style>
+:root{
+ --bg:#17191d;
+ --panel:#202226;
+ --panel2:#282b30;
+ --panel3:#111316;
+ --line:#383b41;
+ --text:#e8e9eb;
+ --muted:#92969e;
+ --red:#e74c4c;
+ --red2:#a92e35;
+ --gold:#d7b56d;
+ --green:#45b987;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font:14px/1.45 system-ui,Arial,sans-serif;
+}
+header{
+ height:62px;background:#111316;border-bottom:1px solid #34363b;
+ display:flex;align-items:center;padding:0 18px;
+ position:sticky;top:0;z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+ width:35px;height:35px;border-radius:8px;
+ background:linear-gradient(145deg,#ef5555,#9e2027);
+ display:grid;place-items:center;font-weight:900;font-size:15px;
+ color:white;box-shadow:0 4px 15px #b82d3530;
+}
+h1{font-size:17px;margin:0;font-weight:800}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px}
+.headerRight{margin-left:auto;color:#9a9da4;font-size:11px}
+main{max-width:1450px;margin:auto;padding:12px;display:grid;gap:12px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.85fr);gap:12px}
+.panel{
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:8px;overflow:hidden;min-width:0;
+}
+.panelHead{
+ height:39px;padding:0 13px;display:flex;align-items:center;
+ background:#25272c;border-bottom:1px solid var(--line);
+ font-size:12px;font-weight:800;letter-spacing:.4px;
+}
+.panelHead .tag{margin-left:auto;color:var(--gold);font-size:10px}
+.content{padding:12px}
+.videoBox{
+ position:relative;background:#08090a;aspect-ratio:16/9;
+ display:grid;place-items:center;border-bottom:1px solid #383b41;
+}
+video{width:100%;height:100%;object-fit:contain;background:#08090a}
+#caption{
+ position:absolute;bottom:8%;left:5%;width:90%;
+ text-align:center;color:white;font-weight:700;font-size:24px;
+ text-shadow:2px 2px 4px #000,0 0 6px #000;
+ white-space:pre-wrap;pointer-events:none;
+}
+.videoPlaceholder{
+ position:absolute;text-align:center;color:#747981;
+ font-size:12px;pointer-events:none;
+}
+.videoPlaceholder strong{display:block;color:#c6c8cc;font-size:15px;margin-bottom:6px}
+.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:10px}
+button,.btn{
+ border:1px solid #44474e;background:#303339;color:#e9eaec;
+ border-radius:5px;padding:9px 12px;font:inherit;font-size:12px;
+ font-weight:700;cursor:pointer;display:inline-flex;align-items:center;
+ justify-content:center;gap:6px;
+}
+button:hover,.btn:hover{background:#3a3d44}
+button:disabled{opacity:.4;cursor:not-allowed}
+.primary{background:#a83239;border-color:#c4454c;color:white}
+.primary:hover{background:#c13d45}
+.green{background:#214a3a;border-color:#39785c}
+.red{background:#4a252a;border-color:#813b43}
+.gold{background:#4a3c24;border-color:#79633a;color:#f0d79d}
+.ghost{background:transparent}
+label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
+input,select,textarea{
+ width:100%;background:#15171a;color:#e8e9eb;
+ border:1px solid #41444a;border-radius:5px;
+ padding:9px 10px;font:inherit;font-size:13px;outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:#b84248}
+textarea{min-height:75px;resize:vertical}
+.field{flex:1;min-width:110px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tool{background:#181a1e;border:1px solid #36393f;padding:10px;border-radius:6px}
+.tool button{width:100%}
+.small{font-size:11px;color:var(--muted);margin-top:8px}
+.status{
+ background:#15171a;border:1px solid #34373d;border-radius:5px;
+ padding:9px;color:#a8abb1;font-size:11px;margin-top:8px;
+}
+.right{display:flex;flex-direction:column;gap:12px}
+.editor{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.wide{grid-column:1/-1}
+.cueList{display:flex;flex-direction:column;gap:5px;max-height:360px;overflow:auto}
+.cue{
+ display:grid;grid-template-columns:76px 1fr auto;gap:8px;
+ align-items:start;padding:8px;background:#17191d;
+ border:1px solid #34373d;border-radius:5px;
+}
+.cue.active{border-color:#d7b56d;background:#29251d}
+.cue time{font-size:10px;color:var(--gold);cursor:pointer;padding-top:3px}
+.cueText{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;cursor:pointer}
+.cue button{padding:5px 7px;font-size:10px}
+.timeline{background:#111316;border:1px solid #34373d;border-radius:6px;overflow:hidden}
+.timelineHead{padding:8px 10px;color:#9b9ea5;font-size:10px;border-bottom:1px solid #34373d}
+.timelineTrack{height:48px;position:relative;overflow:hidden;background:#191b1f}
+.timelineTrack:before{
+ content:"";position:absolute;inset:0;
+ background:repeating-linear-gradient(90deg,transparent 0,transparent 49px,#303239 50px);
+}
+.trackCue{
+ position:absolute;top:8px;height:31px;background:#7d292f;
+ border:1px solid #c04b52;border-radius:3px;overflow:hidden;
+ font-size:9px;padding:4px;white-space:nowrap;color:#fff;
+ cursor:pointer;
+}
+.trackCue.active{background:#a73a42;border-color:#f1b2b5}
+.timelineFoot{padding:7px 10px;color:#7e828a;font-size:10px}
+footer{text-align:center;color:#777b83;font-size:10px;padding:18px}
+.hidden{display:none!important}
+@media(max-width:850px){
+ .workspace{grid-template-columns:1fr}
+ .right{display:contents}
+ .videoPanel{grid-row:1}
+ .filePanel{grid-row:2}
+ .autoPanel{grid-row:3}
+ .editorPanel{grid-row:4}
+ .listPanel{grid-row:5}
+ .timelinePanel{grid-row:6}
+}
+@media(max-width:480px){
+ header{padding:0 12px}
+ .headerRight{display:none}
+ main{padding:8px;gap:8px}
+ .workspace{gap:8px}
+ .content{padding:9px}
+ .panelHead{height:36px}
+ button,.btn{padding:9px 10px}
+ #caption{font-size:18px}
+ .cue{grid-template-columns:62px 1fr auto}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="brand">
+<div class="logo">SS</div>
+<div>
+<h1>SHANKAR SUBTITLE STUDIO</h1>
+<small>MOVIE POST-PRODUCTION WORKSPACE</small>
+</div>
+</div>
+<div class="headerRight">SUBTITLE EDITOR • LOCAL PROJECT</div>
+</header>
+
+<main>
+
+<div class="workspace">
+
+<section class="panel videoPanel">
+<div class="panelHead">01 — SOURCE VIEWER <span class="tag">VIDEO</span></div>
+
+<div class="videoBox">
+<video id="video" controls playsinline></video>
+<div id="placeholder" class="videoPlaceholder">
+<strong>NO VIDEO LOADED</strong>
+Import a movie to begin editing
+</div>
+<div id="caption"></div>
+</div>
+
+<div class="content">
+<div class="row" style="margin-top:0">
+<label class="btn primary" for="movieFile">＋ Import Movie</label>
+<input id="movieFile" type="file" accept="video/*" class="hidden">
+<button id="play">▶ Play</button>
+<button id="pause">Ⅱ Pause</button>
+</div>
+
+<div class="grid" style="margin-top:10px">
+<div><label>PLAYHEAD</label><input id="current" readonly value="00:00:00,000"></div>
+<div><label>DURATION</label><input id="duration" readonly value="00:00:00,000"></div>
+</div>
+
+<div class="row">
+<button id="setStart" class="green">Set Start</button>
+<button id="setEnd">Set End</button>
+<button id="jumpBack">− 5 sec</button>
+<button id="jumpForward">+ 5 sec</button>
+</div>
+
+<p class="small">Video is previewed locally in your browser.</p>
+</div>
+</section>
+
+<div class="right">
+
+<section class="panel filePanel">
+<div class="panelHead">02 — SUBTITLE FILES <span class="tag">IMPORT / EXPORT</span></div>
+<div class="content">
+
+<div class="tools">
+<div class="tool">
+<label>Import subtitle</label>
+<label class="btn" for="srtFile">Import SRT / VTT</label>
+<input id="srtFile" type="file" accept=".srt,.vtt,text/plain" class="hidden">
+</div>
+<div class="tool">
+<label>Export subtitle</label>
+<button id="exportSrt" class="primary">Export SRT</button>
+</div>
+<div class="tool">
+<label>Web subtitle</label>
+<button id="exportVtt">Export VTT</button>
+</div>
+<div class="tool">
+<label>Project backup</label>
+<button id="saveProject">Save JSON</button>
+</div>
+</div>
+
+<div class="row">
+<button id="loadProject">Open Project</button>
+<input id="projectFile" type="file" accept=".json" class="hidden">
+<button id="clear" class="red">Clear All</button>
+</div>
+
+<p class="small">SRT is compatible with many movie players. Exporting SRT does not burn captions into the movie.</p>
+</div>
+</section>
+
+<section class="panel autoPanel">
+<div class="panelHead">03 — SPEECH RECOGNITION <span class="tag">AUTO CAPTION</span></div>
+<div class="content">
+
+<label>Recognition Language</label>
+<select id="speechLang">
+<option value="as-IN">Assamese</option>
+<option value="bn-IN">Bengali</option>
+<option value="brx-IN">Bodo</option>
+<option value="doi-IN">Dogri</option>
+<option value="gu-IN">Gujarati</option>
+<option value="hi-IN" selected>Hindi</option>
+<option value="kn-IN">Kannada</option>
+<option value="ks-IN">Kashmiri</option>
+<option value="kok-IN">Konkani</option>
+<option value="mai-IN">Maithili</option>
+<option value="ml-IN">Malayalam</option>
+<option value="mni-IN">Manipuri (Meitei)</option>
+<option value="mr-IN">Marathi</option>
+<option value="ne-IN">Nepali</option>
+<option value="or-IN">Odia</option>
+<option value="pa-IN">Punjabi</option>
+<option value="sa-IN">Sanskrit</option>
+<option value="sat-IN">Santali</option>
+<option value="sd-IN">Sindhi</option>
+<option value="ta-IN">Tamil</option>
+<option value="te-IN">Telugu</option>
+<option value="ur-IN">Urdu</option>
+<option value="en-IN">English (India)</option>
+</select>
+
+<div class="row">
+<button id="listen" class="green">● Start Listening</button>
+<button id="stop" class="red" disabled>Stop</button>
+</div>
+
+<div id="speechStatus" class="status">Ready. Play movie audio aloud near your microphone.</div>
+
+<p class="small">
+Microphone-based recognition. Browser language support varies.
+Allow microphone access and play the movie through your speaker.
+</p>
+</div>
+</section>
+
+</div>
+</div>
+
+<section class="panel editorPanel">
+<div class="panelHead">04 — SUBTITLE INSPECTOR <span class="tag">MANUAL EDIT</span></div>
+<div class="content">
+
+<div class="editor">
+<div>
+<label>START TIME (HH:MM:SS,mmm)</label>
+<input id="editStart" placeholder="00:00:01,000">
+</div>
+<div>
+<label>END TIME (HH:MM:SS,mmm)</label>
+<input id="editEnd" placeholder="00:00:03,000">
+</div>
+<div class="wide">
+<label>SUBTITLE TEXT</label>
+<textarea id="editText" placeholder="Enter subtitle text..."></textarea>
+</div>
+<div class="wide row" style="margin-top:0">
+<button id="add" class="primary">＋ Add Subtitle</button>
+<button id="update" disabled>Update Selected</button>
+<button id="new">New Subtitle</button>
+</div>
+</div>
+
+<hr style="border:0;border-top:1px solid #383b41;margin:18px 0">
+
+<h2 style="font-size:13px">05 — SUBTITLE TRANSLATION</h2>
+
+<div class="editor">
+<div>
+<label>SOURCE LANGUAGE</label>
+<select id="fromLang">
+<option value="auto">Auto Detect</option>
+<option value="as">Assamese</option>
+<option value="bn">Bengali</option>
+<option value="brx">Bodo</option>
+<option value="doi">Dogri</option>
+<option value="gu">Gujarati</option>
+<option value="hi">Hindi</option>
+<option value="kn">Kannada</option>
+<option value="ks">Kashmiri</option>
+<option value="kok">Konkani</option>
+<option value="mai">Maithili</option>
+<option value="ml">Malayalam</option>
+<option value="mni">Manipuri (Meitei)</option>
+<option value="mr">Marathi</option>
+<option value="ne">Nepali</option>
+<option value="or">Odia</option>
+<option value="pa">Punjabi</option>
+<option value="sa">Sanskrit</option>
+<option value="sat">Santali</option>
+<option value="sd">Sindhi</option>
+<option value="ta">Tamil</option>
+<option value="te">Telugu</option>
+<option value="ur">Urdu</option>
+<option value="en">English</option>
+</select>
+</div>
+
+<div>
+<label>TARGET LANGUAGE</label>
+<select id="toLang">
+<option value="as">Assamese</option>
+<option value="bn">Bengali</option>
+<option value="brx">Bodo</option>
+<option value="doi">Dogri</option>
+<option value="gu">Gujarati</option>
+<option value="hi">Hindi</option>
+<option value="kn">Kannada</option>
+<option value="ks">Kashmiri</option>
+<option value="kok">Konkani</option>
+<option value="mai">Maithili</option>
+<option value="ml">Malayalam</option>
+<option value="mni">Manipuri (Meitei)</option>
+<option value="mr">Marathi</option>
+<option value="ne">Nepali</option>
+<option value="or" selected>Odia</option>
+<option value="pa">Punjabi</option>
+<option value="sa">Sanskrit</option>
+<option value="sat">Santali</option>
+<option value="sd">Sindhi</option>
+<option value="ta">Tamil</option>
+<option value="te">Telugu</option>
+<option value="ur">Urdu</option>
+<option value="en">English</option>
+</select>
+</div>
+
+<div class="wide row" style="margin-top:0">
+<button id="translateAll" class="primary">Translate All</button>
+<button id="translateSelected">Translate Selected</button>
+</div>
+</div>
+
+<div id="translateStatus" class="small">
+Translation uses a public translation service. Language support may vary.
+</div>
+</div>
+</section>
+
+<section class="panel listPanel">
+<div class="panelHead">06 — SUBTITLE LIST <span class="tag" id="count">0 CUES</span></div>
+<div class="content">
+<div id="cueList" class="cueList"></div>
+</div>
+</section>
+
+<section class="panel timelinePanel">
+<div class="panelHead">07 — SUBTITLE TIMELINE <span class="tag">EDITING TRACK</span></div>
+<div class="content">
+<div class="timeline">
+<div class="timelineHead">SUBTITLE TRACK 1</div>
+<div id="timelineTrack" class="timelineTrack"></div>
+<div class="timelineFoot">Select a subtitle block to edit. Timeline scale follows movie duration.</div>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer>SHANKAR SUBTITLE STUDIO • DARK POST-PRODUCTION WORKSPACE</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const video=$('video');
+let cues=[],selectedId=null,nextId=1;
+let movieUrl=null,recognition=null,listening=false;
+let projectName='movie-subtitles';
+
+function pad(n,len=2){return String(n).padStart(len,'0')}
+
+function fmt(ms){
+ms=Math.max(0,Math.round(Number(ms)||0));
+let h=Math.floor(ms/3600000);ms%=3600000;
+let m=Math.floor(ms/60000);ms%=60000;
+let s=Math.floor(ms/1000),z=ms%1000;
+return `${pad(h)}:${pad(m)}:${pad(s)},${pad(z,3)}`;
+}
+
+function parseTime(s){
+if(!s)return NaN;
+s=String(s).trim().replace('.',',');
+let m=s.match(/^(?:(\d+):)?(\d{1,2}):(\d{1,2})(?:,(\d{1,3}))?$/);
+if(!m)return NaN;
+return ((+(m[1]||0))*3600+(+m[2])*60+(+m[3]))*1000+
+(+(m[4]||'0').padEnd(3,'0'));
+}
+
+function nowMs(){return Math.round(video.currentTime*1000)}
+
+function render(){
+cues.sort((a,b)=>a.start-b.start);
+$('count').textContent=cues.length+' CUES';
+$('cueList').innerHTML='';
+$('timelineTrack').innerHTML='';
+
+if(!cues.length){
+$('cueList').innerHTML='<div class="status">No subtitle cues. Add or import subtitles.</div>';
+return;
+}
+
+let duration=Math.max(video.duration||0,1)*1000;
+
+cues.forEach(c=>{
+let div=document.createElement('div');
+div.className='cue'+(selectedId===c.id?' active':'');
+
+let time=document.createElement('time');
+time.textContent=fmt(c.start).slice(0,12);
+time.onclick=()=>{video.currentTime=c.start/1000;selectCue(c.id)};
+
+let text=document.createElement('div');
+text.className='cueText';
+text.textContent=c.text;
+text.onclick=()=>selectCue(c.id);
+
+let actions=document.createElement('div');
+let edit=document.createElement('button');
+edit.textContent='Edit';
+edit.onclick=()=>selectCue(c.id);
+
+let del=document.createElement('button');
+del.textContent='×';
+del.className='red';
+del.onclick=()=>{
+cues=cues.filter(x=>x.id!==c.id);
+if(selectedId===c.id)selectedId=null;
+render();
+};
+
+actions.append(edit,del);
+div.append(time,text,actions);
+$('cueList').append(div);
+
+let block=document.createElement('div');
+block.className='trackCue'+(selectedId===c.id?' active':'');
+block.style.left=(c.start/duration*100)+'%';
+block.style.width=Math.max(1,(c.end-c.start)/duration*100)+'%';
+block.textContent=c.text;
+block.title=fmt(c.start)+' — '+fmt(c.end);
+block.onclick=()=>selectCue(c.id);
+$('timelineTrack').append(block);
+});
+}
+
+function selectCue(id){
+selectedId=id;
+let c=cues.find(x=>x.id===id);
+if(!c)return;
+$('editStart').value=fmt(c.start);
+$('editEnd').value=fmt(c.end);
+$('editText').value=c.text;
+$('update').disabled=false;
+render();
+}
+
+function clearEditor(){
+selectedId=null;
+$('editStart').value=fmt(nowMs());
+$('editEnd').value=fmt(nowMs()+2500);
+$('editText').value='';
+$('update').disabled=true;
+render();
+}
+
+function readEditor(){
+let start=parseTime($('editStart').value);
+let end=parseTime($('editEnd').value);
+let text=$('editText').value.trim();
+if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start){
+alert('Enter valid start and end times.');return null;
+}
+if(!text){alert('Enter subtitle text.');return null}
+return {start,end,text};
+}
+
+function addCue(data){
+cues.push({...data,id:nextId++});
+render();
+}
+
+$('movieFile').onchange=e=>{
+let file=e.target.files[0];if(!file)return;
+if(movieUrl)URL.revokeObjectURL(movieUrl);
+movieUrl=URL.createObjectURL(file);
+video.src=movieUrl;
+projectName=file.name.replace(/\.[^.]+$/,'')||'movie-subtitles';
+$('placeholder').classList.add('hidden');
+video.load();
+};
+
+video.onloadedmetadata=()=>{
+$('duration').value=fmt(video.duration*1000);
+render();
+};
+
+video.ontimeupdate=()=>{
+$('current').value=fmt(nowMs());
+let t=nowMs();
+let c=cues.find(x=>t>=x.start&&t<=x.end);
+$('caption').textContent=c?c.text:'';
+};
+
+$('play').onclick=()=>video.play();
+$('pause').onclick=()=>video.pause();
+$('setStart').onclick=()=>{$('editStart').value=fmt(nowMs())};
+$('setEnd').onclick=()=>{$('editEnd').value=fmt(nowMs())};
+$('jumpBack').onclick=()=>video.currentTime=Math.max(0,video.currentTime-5);
+$('jumpForward').onclick=()=>video.currentTime=Math.min(video.duration||Infinity,video.currentTime+5);
+
+$('add').onclick=()=>{
+let d=readEditor();
+if(d){addCue(d);clearEditor()}
+};
+
+$('update').onclick=()=>{
+let d=readEditor();if(!d||selectedId===null)return;
+let i=cues.findIndex(c=>c.id===selectedId);
+if(i>=0)cues[i]={...cues[i],...d};
+render();
+};
+
+$('new').onclick=clearEditor;
+
+function download(name,content,type='text/plain'){
+let blob=new Blob([content],{type});
+let url=URL.createObjectURL(blob);
+let a=document.createElement('a');
+a.href=url;a.download=name;a.click();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function makeSrt(){
+return [...cues].sort((a,b)=>a.start-b.start)
+.map((c,i)=>`${i+1}\n${fmt(c.start)} --> ${fmt(c.end)}\n${c.text}`)
+.join('\n\n')+'\n';
+}
+
+function makeVtt(){
+return 'WEBVTT\n\n'+[...cues].sort((a,b)=>a.start-b.start)
+.map(c=>`${fmt(c.start).replace(',','.')} --> ${fmt(c.end).replace(',','.')}\n${c.text}`)
+.join('\n\n')+'\n';
+}
+
+$('exportSrt').onclick=()=>{
+if(!cues.length)return alert('Add subtitles first.');
+download(projectName+'.srt',makeSrt(),'text/plain');
+};
+
+$('exportVtt').onclick=()=>{
+if(!cues.length)return alert('Add subtitles first.');
+download(projectName+'.vtt',makeVtt(),'text/vtt');
+};
+
+$('srtFile').onchange=async e=>{
+let file=e.target.files[0];if(!file)return;
+let txt=(await file.text()).replace(/\r/g,'').replace(/^WEBVTT[^\n]*\n/,'');
+let blocks=txt.trim().split(/\n\s*\n/),result=[];
+for(let b of blocks){
+let lines=b.split('\n');
+let index=lines.findIndex(x=>x.includes('-->'));
+if(index<0)continue;
+let pair=lines[index].split('-->');
+let start=parseTime(pair[0].trim());
+let end=parseTime(pair[1].trim().split(/\s+/)[0]);
+let text=lines.slice(index+1).join('\n').trim();
+if(Number.isFinite(start)&&Number.isFinite(end)&&end>start&&text)
+result.push({id:nextId++,start,end,text});
+}
+if(!result.length)return alert('Could not read subtitle file.');
+cues=result;selectedId=null;
+projectName=file.name.replace(/\.(srt|vtt)$/i,'');
+render();
+};
+
+$('saveProject').onclick=()=>{
+download(projectName+'.json',JSON.stringify({name:projectName,cues},null,2),'application/json');
+};
+
+$('loadProject').onclick=()=>$('projectFile').click();
+
+$('projectFile').onchange=async e=>{
+let file=e.target.files[0];if(!file)return;
+try{
+let p=JSON.parse(await file.text());
+if(!Array.isArray(p.cues))throw Error();
+cues=p.cues.map(c=>({
+id:Number(c.id)||nextId++,
+start:Number(c.start),end:Number(c.end),text:String(c.text||'')
+})).filter(c=>Number.isFinite(c
